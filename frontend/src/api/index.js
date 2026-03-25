@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: 'https://industrious-nourishment-production-43f0.up.railway.app/api',
   timeout: 15000,
   headers: { 'Content-Type': 'application/json' }
 })
