@@ -27,7 +27,7 @@
 
     <template v-else>
       <div class="pages-grid" v-if="pages.length">
-        <div v-for="page in pages" :key="page.id" class="page-card">
+        <div v-for="page in pages" :key="page.id" class="page-card" :style="{animationDelay: (pages.indexOf(page) * 0.04) + 's'}">
           <div class="page-card-top">
             <div class="page-icon">{{ page.page_name[0] }}</div>
             <div class="page-header-info">
@@ -149,7 +149,11 @@ onMounted(async () => {
 
 <style scoped>
 .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-.page-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: border-color 0.2s; display: flex; flex-direction: column; gap: 14px; }
+.page-card {
+  animation: fadeInUp 0.3s ease both; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; transition: border-color 0.2s; display: flex; flex-direction: column; gap: 14px; }
+.page-card {
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
 .page-card:hover { border-color: var(--border-light); }
 
 .page-card-top { display: flex; align-items: flex-start; gap: 12px; }

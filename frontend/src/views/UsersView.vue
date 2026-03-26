@@ -11,7 +11,6 @@
       </button>
     </div>
 
-    <!-- Role info cards -->
     <div class="role-cards">
       <div v-for="role in roles" :key="role.name" class="role-card">
         <div class="role-icon">{{ role.emoji }}</div>
@@ -47,22 +46,17 @@
                   <div class="user-av">{{ user.first_name?.[0] || user.username[0] }}</div>
                   <div>
                     <div class="fw600">{{ user.first_name }} {{ user.last_name }}</div>
-                    <div class="text-muted text-xs">@{{ user.username }}</div>
+                    <div style="font-size:11px;color:var(--text-muted)">@{{ user.username }}</div>
                   </div>
                 </div>
               </td>
               <td><span class="badge" :class="`badge-${user.role}`">{{ user.role }}</span></td>
-              <td class="text-secondary">{{ user.email || '—' }}</td>
+              <td style="color:var(--text-secondary)">{{ user.email || '—' }}</td>
               <td class="hide-sm"><span class="badge" :class="user.is_active ? 'badge-active' : 'badge-suspended'">{{ user.is_active ? 'Active' : 'Disabled' }}</span></td>
-              <td class="text-muted text-xs hide-sm">{{ formatDate(user.created_at) }}</td>
+              <td style="font-size:11px;color:var(--text-muted)" class="hide-sm">{{ formatDate(user.created_at) }}</td>
               <td>
                 <div class="actions">
-                  <button
-                    v-if="user.role === 'manager'"
-                    class="btn btn-sm btn-secondary"
-                    @click="openAssign(user)"
-                    title="Assign Accounts"
-                  >
+                  <button v-if="user.role === 'manager'" class="btn btn-sm btn-secondary" @click="openAssign(user)" title="Assign Accounts">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
                     <span class="hide-sm">Assign</span>
                   </button>
@@ -80,11 +74,11 @@
       </div>
     </div>
 
-    <!-- Manager Assignments Overview -->
+    <!-- Manager Assignments -->
     <div v-if="managers.length" class="card" style="margin-top:20px">
       <div class="card-header">
         <h3 class="card-title">Manager Assignments</h3>
-        <p style="font-size:12px;color:var(--text-muted);margin:0">Overview of which accounts each manager handles</p>
+        <p style="font-size:12px;color:var(--text-muted);margin:0">Account distribution per manager</p>
       </div>
       <div class="manager-assignments">
         <div v-for="mgr in managers" :key="mgr.id" class="manager-row">
@@ -92,19 +86,13 @@
             <div class="user-av">{{ mgr.first_name?.[0] || mgr.username[0] }}</div>
             <div>
               <div class="fw600">{{ mgr.first_name || mgr.username }} {{ mgr.last_name }}</div>
-              <div class="text-muted text-xs">{{ mgr.assigned_accounts_count || 0 }} accounts assigned</div>
+              <div style="font-size:11px;color:var(--text-muted)">{{ mgr.assigned_accounts_count || 0 }} accounts assigned</div>
             </div>
           </div>
           <div class="manager-accounts">
-            <span v-if="!mgr.assigned_accounts?.length" class="text-muted text-xs">No accounts assigned</span>
-            <span
-              v-for="acc in mgr.assigned_accounts?.slice(0,5)"
-              :key="acc.id"
-              class="account-chip"
-            >{{ acc.name }}</span>
-            <span v-if="(mgr.assigned_accounts?.length || 0) > 5" class="account-chip chip-more">
-              +{{ mgr.assigned_accounts.length - 5 }} more
-            </span>
+            <span v-if="!mgr.assigned_accounts?.length" style="font-size:12px;color:var(--text-muted)">No accounts assigned</span>
+            <span v-for="acc in mgr.assigned_accounts?.slice(0,5)" :key="acc.id" class="account-chip">{{ acc.name }}</span>
+            <span v-if="(mgr.assigned_accounts?.length || 0) > 5" class="account-chip chip-more">+{{ mgr.assigned_accounts.length - 5 }} more</span>
           </div>
           <button class="btn btn-sm btn-secondary" @click="openAssign(mgr)">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -190,7 +178,7 @@
             <button class="btn-icon" @click="showAssignModal = false"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
           </div>
           <div class="modal-body">
-            <p class="text-secondary" style="margin-bottom:14px;font-size:13px">Select which Facebook accounts this manager can access and manage.</p>
+            <p style="color:var(--text-secondary);margin-bottom:14px;font-size:13px">Select which Facebook accounts this manager can access and manage.</p>
             <div class="assign-search">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <input v-model="assignSearch" class="form-input" placeholder="Search accounts..." />
@@ -200,25 +188,20 @@
                 <input type="checkbox" :checked="allSelected" @change="toggleAll" />
                 Select all ({{ filteredAllAccounts.length }})
               </label>
-              <span class="text-muted text-xs">{{ selectedAccountIds.length }} selected</span>
+              <span style="font-size:11px;color:var(--text-muted)">{{ selectedAccountIds.length }} selected</span>
             </div>
             <div class="accounts-checklist" v-if="allAccountsLoading"><div class="spinner" style="margin:20px auto"></div></div>
             <div class="accounts-checklist" v-else>
-              <label
-                v-for="acc in filteredAllAccounts"
-                :key="acc.id"
-                class="checklist-item"
-                :class="{ selected: selectedAccountIds.includes(acc.id) }"
-              >
+              <label v-for="acc in filteredAllAccounts" :key="acc.id" class="checklist-item" :class="{ selected: selectedAccountIds.includes(acc.id) }">
                 <input type="checkbox" :value="acc.id" v-model="selectedAccountIds" />
                 <div class="acc-check-avatar">{{ acc.name[0] }}</div>
                 <div class="acc-check-info">
                   <div class="fw600">{{ acc.name }}</div>
-                  <div class="text-muted text-xs">{{ acc.email }} · {{ acc.pages_count }} pages</div>
+                  <div style="font-size:11px;color:var(--text-muted)">{{ acc.email }} · {{ acc.pages_count }} pages</div>
                 </div>
                 <span class="badge" :class="`badge-${acc.status}`">{{ acc.status }}</span>
               </label>
-              <div v-if="!filteredAllAccounts.length" class="text-muted" style="padding:20px;text-align:center">No accounts found</div>
+              <div v-if="!filteredAllAccounts.length" style="padding:20px;text-align:center;color:var(--text-muted)">No accounts found</div>
             </div>
           </div>
           <div class="modal-footer">
@@ -253,10 +236,14 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { usersAPI, accountsAPI } from '@/api'
 import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
 
 const auth = useAuthStore()
+const toast = useToastStore()
+const router = useRouter()
 const users = ref([])
 const loading = ref(true)
 const showModal = ref(false)
@@ -265,7 +252,6 @@ const deleteTarget = ref(null)
 const saving = ref(false)
 const formError = ref('')
 
-// Assign accounts
 const showAssignModal = ref(false)
 const assignTarget = ref(null)
 const selectedAccountIds = ref([])
@@ -308,7 +294,6 @@ async function fetchUsers() {
   try {
     const { data } = await usersAPI.list()
     const list = data.results || data
-    // Fetch assigned accounts for each manager
     await Promise.all(list.filter(u => u.role === 'manager').map(async mgr => {
       try {
         const { data: assigned } = await usersAPI.getAssignedAccounts(mgr.id)
@@ -351,9 +336,11 @@ async function saveAssignment() {
   try {
     await usersAPI.assignAccounts(assignTarget.value.id, selectedAccountIds.value)
     showAssignModal.value = false
+    toast.success(`Accounts assigned to ${assignTarget.value.first_name || assignTarget.value.username}`)
     await fetchUsers()
-  } catch (e) {
-    alert('Failed to save assignment')
+    router.push('/users')
+  } catch {
+    toast.error('Failed to save assignment')
   } finally { saving.value = false }
 }
 
@@ -363,15 +350,19 @@ async function saveUser() {
   try {
     if (editingUser.value) {
       await usersAPI.update(editingUser.value.id, { email: form.value.email, first_name: form.value.first_name, last_name: form.value.last_name, role: form.value.role, phone: form.value.phone, is_active: form.value.is_active })
+      toast.success('User updated successfully')
     } else {
       await usersAPI.create(form.value)
+      toast.success('User created successfully')
     }
     showModal.value = false
     await fetchUsers()
+    router.push('/users')
   } catch (e) {
     const errs = e.response?.data
     if (errs) formError.value = Object.values(errs).flat().join(' ')
     else formError.value = 'An error occurred'
+    toast.error(formError.value)
   } finally { saving.value = false }
 }
 
@@ -381,9 +372,13 @@ async function doDelete() {
   saving.value = true
   try {
     await usersAPI.delete(deleteTarget.value.id)
+    toast.success(`User "${deleteTarget.value.username}" deleted`)
     deleteTarget.value = null
     await fetchUsers()
-  } catch {} finally { saving.value = false }
+    router.push('/users')
+  } catch {
+    toast.error('Failed to delete user')
+  } finally { saving.value = false }
 }
 
 onMounted(fetchUsers)
@@ -391,27 +386,23 @@ onMounted(fetchUsers)
 
 <style scoped>
 .role-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px; }
-.role-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; align-items: center; gap: 12px; }
+.role-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; display: flex; align-items: center; gap: 12px; animation: fadeInUp 0.3s ease both; }
 .role-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--bg-card-hover); flex-shrink: 0; }
 .role-name { font-weight: 700; font-size: 14px; }
 .role-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
 .user-av { width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent), var(--purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
 .user-cell { display: flex; align-items: center; gap: 10px; }
 .fw600 { font-weight: 600; }
-.text-secondary { color: var(--text-secondary); }
-.text-muted { color: var(--text-muted); }
-.text-xs { font-size: 11px; }
 
-/* Manager assignments section */
-.manager-assignments { display: flex; flex-direction: column; gap: 0; }
-.manager-row { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.manager-assignments { display: flex; flex-direction: column; }
+.manager-row { display: flex; align-items: center; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; transition: background 0.15s; }
 .manager-row:last-child { border-bottom: none; }
+.manager-row:hover { background: var(--bg-card-hover); }
 .manager-info { display: flex; align-items: center; gap: 10px; min-width: 160px; }
 .manager-accounts { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; }
 .account-chip { background: var(--accent-glow); color: var(--accent); border: 1px solid rgba(24,119,242,0.2); border-radius: 20px; padding: 2px 10px; font-size: 11px; font-weight: 500; }
 .chip-more { background: var(--bg-card-hover); color: var(--text-muted); border-color: var(--border); }
 
-/* Assign modal */
 .assign-search { position: relative; margin-bottom: 10px; }
 .assign-search svg { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); pointer-events: none; }
 .assign-search .form-input { padding-left: 32px; }
@@ -423,13 +414,6 @@ onMounted(fetchUsers)
 .checklist-item input[type=checkbox] { flex-shrink: 0; }
 .acc-check-avatar { width: 28px; height: 28px; background: linear-gradient(135deg, var(--accent), var(--purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; }
 .acc-check-info { flex: 1; min-width: 0; }
-
 .modal-lg { max-width: 560px; }
-
-@media (max-width: 640px) {
-  .hide-sm { display: none; }
-  .manager-row { gap: 10px; }
-  .manager-info { min-width: unset; width: 100%; }
-  .manager-accounts { width: 100%; }
-}
+@media (max-width: 640px) { .hide-sm { display: none; } .manager-row { gap: 10px; } .manager-info { min-width: unset; width: 100%; } .manager-accounts { width: 100%; } }
 </style>

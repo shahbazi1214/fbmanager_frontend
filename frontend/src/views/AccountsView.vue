@@ -7,18 +7,16 @@
       </div>
       <button v-if="auth.isAdmin" class="btn btn-primary" @click="openCreate">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        <span class="hide-xs">Add Account</span>
-        <span class="show-xs">Add</span>
+        Add Account
       </button>
     </div>
 
-    <!-- Filters -->
     <div class="filter-bar">
       <div class="search-input">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input v-model="search" class="form-input" placeholder="Search accounts..." @input="debouncedFetch" />
       </div>
-      <select v-model="statusFilter" class="form-select status-select" @change="fetchAccounts">
+      <select v-model="statusFilter" class="form-select filter-select" @change="fetchAccounts">
         <option value="">All Statuses</option>
         <option v-for="s in statuses" :key="s" :value="s">{{ s }}</option>
       </select>
@@ -28,7 +26,6 @@
     <div v-if="loading" class="loading-full"><div class="spinner"></div></div>
 
     <template v-else>
-      <!-- Accounts grid -->
       <div class="accounts-grid" v-if="accounts.length">
         <div v-for="acc in accounts" :key="acc.id" class="account-card">
           <div class="account-card-header">
@@ -68,7 +65,7 @@
             </button>
             <button v-if="auth.isAdmin" class="btn btn-danger btn-sm" @click="confirmDelete(acc)">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-              <span class="hide-xs">Delete</span>
+              Delete
             </button>
           </div>
         </div>
@@ -78,7 +75,7 @@
         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <h3>No accounts found</h3>
         <p v-if="auth.isAdmin">Add your first Facebook account to get started</p>
-        <p v-else>No accounts have been assigned to you yet. Contact your admin.</p>
+        <p v-else>No accounts have been assigned to you yet.</p>
         <button v-if="auth.isAdmin" class="btn btn-primary" style="margin-top:16px" @click="openCreate">Add Account</button>
       </div>
     </template>
@@ -105,7 +102,7 @@
                 <input v-model="form.email" type="email" class="form-input" placeholder="john@gmail.com" required />
               </div>
               <div class="form-group">
-                <label class="form-label">Password *</label>
+                <label class="form-label">Password</label>
                 <div class="password-wrap">
                   <input v-model="form.password" :type="showFormPass ? 'text' : 'password'" class="form-input" placeholder="Account password" />
                   <button type="button" class="pass-toggle" @click="showFormPass = !showFormPass">
@@ -119,6 +116,20 @@
                 <input v-model="form.two_fa_code" class="form-input" placeholder="JBSWY3DPEHPK3PXP" style="font-family:'JetBrains Mono',monospace" />
               </div>
               <div class="form-group">
+                <label class="form-label">Recovery Email</label>
+                <input v-model="form.recovery_email" type="email" class="form-input" placeholder="recovery@mail.com" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">Recovery Email Password</label>
+                <div class="password-wrap">
+                  <input v-model="form.recovery_email_password" :type="showRecoveryPass ? 'text' : 'password'" class="form-input" placeholder="Recovery email password" />
+                  <button type="button" class="pass-toggle" @click="showRecoveryPass = !showRecoveryPass">
+                    <svg v-if="!showRecoveryPass" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  </button>
+                </div>
+              </div>
+              <div class="form-group">
                 <label class="form-label">Date of Birth</label>
                 <input v-model="form.date_of_birth" type="date" class="form-input" />
               </div>
@@ -128,15 +139,11 @@
               </div>
               <div class="form-group">
                 <label class="form-label">Facebook Profile ID</label>
-                <input v-model="form.profile_id" class="form-input" placeholder="100012345678" />
+                <input v-model="form.profile_id" class="form-input" placeholder="100012345678" style="font-family:'JetBrains Mono',monospace" />
               </div>
               <div class="form-group">
                 <label class="form-label">Phone Number</label>
                 <input v-model="form.phone_number" class="form-input" placeholder="+1234567890" />
-              </div>
-              <div class="form-group">
-                <label class="form-label">Recovery Email</label>
-                <input v-model="form.recovery_email" type="email" class="form-input" placeholder="recovery@mail.com" />
               </div>
               <div class="form-group">
                 <label class="form-label">Proxy (IP:PORT)</label>
@@ -180,11 +187,14 @@
             </button>
           </div>
           <div class="modal-body">
-            <p style="color:var(--text-secondary)">Delete <strong style="color:var(--text-primary)">{{ deleteTarget.name }}</strong>? This will also delete all pages and data.</p>
+            <p style="color:var(--text-secondary)">Delete <strong style="color:var(--text-primary)">{{ deleteTarget.name }}</strong>? This will also delete all associated pages and data. This cannot be undone.</p>
           </div>
           <div class="modal-footer">
             <button class="btn btn-secondary" @click="deleteTarget = null">Cancel</button>
-            <button class="btn btn-danger" @click="doDelete" :disabled="saving">Delete Account</button>
+            <button class="btn btn-danger" @click="doDelete" :disabled="saving">
+              <span v-if="saving" class="spinner" style="width:14px;height:14px;border-width:2px;border-top-color:var(--red)"></span>
+              Delete Account
+            </button>
           </div>
         </div>
       </div>
@@ -194,11 +204,14 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, useRouter } from 'vue-router'
 import { accountsAPI, usersAPI } from '@/api'
 import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
 
 const auth = useAuthStore()
+const toast = useToastStore()
+const router = useRouter()
 const accounts = ref([])
 const users = ref([])
 const loading = ref(true)
@@ -210,6 +223,7 @@ const formError = ref('')
 const search = ref('')
 const statusFilter = ref('')
 const showFormPass = ref(false)
+const showRecoveryPass = ref(false)
 
 const statuses = ['active', 'inactive', 'suspended', 'checkpoint', 'disabled']
 const managerUsers = computed(() => users.value.filter(u => ['admin','manager'].includes(u.role)))
@@ -223,13 +237,12 @@ function debouncedFetch() {
 const defaultForm = () => ({
   name: '', email: '', password: '', two_fa_code: '', date_of_birth: '',
   profile_url: '', profile_id: '', phone_number: '', recovery_email: '',
-  proxy: '', status: 'active', notes: '', owner: auth.user?.id,
+  recovery_email_password: '', proxy: '', status: 'active', notes: '', owner: auth.user?.id,
 })
 const form = ref(defaultForm())
 
 function timeAgo(dateStr) {
-  const d = new Date(dateStr)
-  const diff = (Date.now() - d) / 1000
+  const diff = (Date.now() - new Date(dateStr)) / 1000
   if (diff < 60) return 'just now'
   if (diff < 3600) return Math.floor(diff / 60) + 'm ago'
   if (diff < 86400) return Math.floor(diff / 3600) + 'h ago'
@@ -259,6 +272,7 @@ function openCreate() {
   form.value = defaultForm()
   formError.value = ''
   showFormPass.value = false
+  showRecoveryPass.value = false
   showModal.value = true
 }
 
@@ -268,11 +282,12 @@ function openEdit(acc) {
     name: acc.name, email: acc.email, password: '', two_fa_code: '',
     date_of_birth: acc.date_of_birth || '', profile_url: acc.profile_url || '',
     profile_id: acc.profile_id || '', phone_number: acc.phone_number || '',
-    recovery_email: acc.recovery_email || '', proxy: acc.proxy || '',
-    status: acc.status, notes: acc.notes || '', owner: acc.owner,
+    recovery_email: acc.recovery_email || '', recovery_email_password: '',
+    proxy: acc.proxy || '', status: acc.status, notes: acc.notes || '', owner: acc.owner,
   }
   formError.value = ''
   showFormPass.value = false
+  showRecoveryPass.value = false
   showModal.value = true
 }
 
@@ -282,18 +297,24 @@ async function saveAccount() {
   try {
     const payload = { ...form.value }
     if (!payload.password) delete payload.password
+    if (!payload.recovery_email_password) delete payload.recovery_email_password
     if (!payload.date_of_birth) delete payload.date_of_birth
     if (editingAccount.value) {
       await accountsAPI.update(editingAccount.value.id, payload)
+      toast.success('Account updated successfully')
     } else {
       await accountsAPI.create(payload)
+      toast.success('Account created successfully')
     }
     showModal.value = false
     await fetchAccounts()
+    // Redirect to accounts list after operation
+    router.push('/accounts')
   } catch (e) {
     const errs = e.response?.data
     if (errs) formError.value = Object.values(errs).flat().join(' ')
     else formError.value = 'An error occurred'
+    toast.error(formError.value)
   } finally { saving.value = false }
 }
 
@@ -303,9 +324,13 @@ async function doDelete() {
   saving.value = true
   try {
     await accountsAPI.delete(deleteTarget.value.id)
+    toast.success(`Account "${deleteTarget.value.name}" deleted`)
     deleteTarget.value = null
     await fetchAccounts()
-  } catch {} finally { saving.value = false }
+    router.push('/accounts')
+  } catch {
+    toast.error('Failed to delete account')
+  } finally { saving.value = false }
 }
 
 onMounted(async () => {
@@ -324,9 +349,10 @@ onMounted(async () => {
 .account-card {
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius); padding: 18px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  animation: fadeInUp 0.3s ease both;
 }
-.account-card:hover { border-color: var(--border-light); box-shadow: var(--shadow-sm); }
+.account-card:hover { border-color: var(--border-light); box-shadow: var(--shadow-sm); transform: translateY(-2px); }
 .account-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
 .account-avatar {
   width: 44px; height: 44px; background: linear-gradient(135deg, var(--accent), var(--purple));
@@ -336,31 +362,12 @@ onMounted(async () => {
 .account-info { flex: 1; min-width: 0; }
 .account-name { font-weight: 700; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .account-email { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.account-meta {
-  display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px;
-  padding: 10px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-}
+.account-meta { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; padding: 10px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .meta-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-secondary); }
 .meta-link { color: var(--accent); text-decoration: none; }
 .meta-link:hover { text-decoration: underline; }
 .account-owner { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); margin-bottom: 14px; }
 .account-actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-.filter-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.total-badge { font-size: 12px; color: var(--text-muted); background: var(--bg-card); border: 1px solid var(--border); padding: 6px 12px; border-radius: var(--radius-sm); margin-left: auto; }
-.status-select { width: 150px; flex-shrink: 0; }
-
-.password-wrap { position: relative; }
-.password-wrap .form-input { padding-right: 40px; }
-.pass-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; padding: 0; }
-
-.hide-xs { display: inline; }
-.show-xs { display: none; }
-
-@media (max-width: 640px) {
-  .accounts-grid { grid-template-columns: 1fr; }
-  .status-select { width: 120px; }
-  .hide-xs { display: none; }
-  .show-xs { display: inline; }
-}
+@media (max-width: 640px) { .accounts-grid { grid-template-columns: 1fr; } }
 </style>

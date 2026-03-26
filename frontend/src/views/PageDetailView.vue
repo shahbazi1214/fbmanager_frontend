@@ -244,13 +244,16 @@
 
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
-import { useRoute, RouterLink } from 'vue-router'
+import { useRoute, RouterLink, useRouter } from 'vue-router'
 import { pagesAPI, statsAPI } from '@/api'
+import { useToastStore } from '@/stores/toast'
 import { useAuthStore } from '@/stores/auth'
 import Chart from 'chart.js/auto'
 
 const route = useRoute()
+const router = useRouter()
 const auth = useAuthStore()
+const toast = useToastStore()
 const page = ref(null)
 const progress = ref(null)
 const loading = ref(true)
@@ -388,7 +391,9 @@ async function savePage() {
   try {
     await pagesAPI.update(route.params.id, editForm.value)
     showEdit.value = false
+    toast.success('Page updated successfully')
     await fetchPage()
+    router.push('/pages/' + route.params.id)
   } catch {} finally { savingEdit.value = false }
 }
 

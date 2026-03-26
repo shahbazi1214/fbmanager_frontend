@@ -238,11 +238,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute, RouterLink } from 'vue-router'
+import { useRoute, RouterLink, useRouter } from 'vue-router'
 import { accountsAPI, pagesAPI } from '@/api'
+import { useToastStore } from '@/stores/toast'
 import { useAuthStore } from '@/stores/auth'
 
 const auth = useAuthStore()
+const toast = useToastStore()
+const router = useRouter()
 const route = useRoute()
 const account = ref(null)
 const loading = ref(true)
@@ -299,7 +302,9 @@ async function savePage() {
     await pagesAPI.create(pageForm.value)
     showAddPage.value = false
     pageForm.value = defaultPage()
+    toast.success('Page added successfully')
     await fetchAccount()
+    router.push('/accounts/' + route.params.id)
   } catch (e) {
     const errs = e.response?.data
     if (errs) pageFormError.value = Object.values(errs).flat().join(' ')

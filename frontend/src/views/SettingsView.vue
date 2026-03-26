@@ -102,8 +102,12 @@
 import { ref, onMounted } from 'vue'
 import { authAPI } from '@/api'
 import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
+import { useThemeStore } from '@/stores/theme'
 
 const auth = useAuthStore()
+const toast = useToastStore()
+const themeStore = useThemeStore()
 const savingProfile = ref(false)
 const savingPass = ref(false)
 const profileSuccess = ref(false)
@@ -121,15 +125,15 @@ const profileForm = ref({
 const passForm = ref({ old_password: '', new_password: '' })
 
 const permissions = [
-  { action: 'View Dashboard', admin: true, manager: true, viewer: true },
-  { action: 'View All Accounts', admin: true, manager: true, viewer: false },
-  { action: 'Create Accounts', admin: true, manager: true, viewer: false },
-  { action: 'Edit Accounts', admin: true, manager: true, viewer: false },
-  { action: 'Delete Accounts', admin: true, manager: false, viewer: false },
-  { action: 'Manage Pages', admin: true, manager: true, viewer: false },
-  { action: 'Update Page Stats', admin: true, manager: true, viewer: false },
-  { action: 'Manage Users', admin: true, manager: false, viewer: false },
-  { action: 'View Own Accounts', admin: true, manager: true, viewer: true },
+  { action: 'View Dashboard', admin: true, manager: true },
+  { action: 'View All Accounts', admin: true, manager: true },
+  { action: 'Create Accounts', admin: true, manager: true },
+  { action: 'Edit Accounts', admin: true, manager: true },
+  { action: 'Delete Accounts', admin: true, manager: false },
+  { action: 'Manage Pages', admin: true, manager: true },
+  { action: 'Update Page Stats', admin: true, manager: true },
+  { action: 'Manage Users', admin: true, manager: false },
+  { action: 'View Own Accounts', admin: true, manager: true },
 ]
 
 async function saveProfile() {
